@@ -5,6 +5,10 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig(({ mode }) => {
 	return {
+		server: {
+			host: '0.0.0.0', // Already set in your systemd config
+			allowedHosts: ['nostrstay.com'], // Add your domain here
+		},
 		test: {
 			testTimeout: 25_000,
 			hookTimeout: 25_000,
@@ -18,9 +22,9 @@ export default defineConfig(({ mode }) => {
 			sveltekit(),
 			SvelteKitPWA({
 				manifest: {
-					name: 'Plebeian Market',
-					short_name: 'Plebeian Market',
-					description: 'Sell stuff for sats',
+					name: 'NostrStay',
+					short_name: 'NostrStay',
+					description: 'Find stays for sats',
 					theme_color: '#0A0A0A',
 					background_color: '#0A0A0A',
 					icons: [
