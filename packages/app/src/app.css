@@ -1,0 +1,222 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+	font-family: 'reglisse';
+	src: url('/fonts/Reglisse_Fill.otf') format('opentype');
+}
+
+@font-face {
+	font-family: 'IBM Plex Mono';
+	src: url('/fonts/IBMPlexMono-Regular.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'IBM Plex Mono';
+	src: url('/fonts/IBMPlexMono-Medium.ttf') format('truetype');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'IBM Plex Mono';
+	src: url('/fonts/IBMPlexMono-SemiBold.ttf') format('truetype');
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'IBM Plex Mono';
+	src: url('/fonts/IBMPlexMono-Bold.ttf') format('truetype');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+:root {
+	--background: #ffffff;
+	--foreground: #1a1a1a;
+	--card: #ffffff;
+	--card-foreground: #262626;
+	--popover: #ffffff;
+	--popover-foreground: #32011f;
+	/* primary */
+	--primary: #1d1d1d;
+	--primary-hover: #0a0a0a;
+	--primary-foreground: #fafafa;
+	--primary-foreground-hover: #ff3eb5;
+	--primary-border: #1d1d1d;
+	--primary-border-hover: #ff3eb5;
+	/* secondary */
+	--secondary: #ff3eb5;
+	--secondary-hover: #0a0a0a;
+	--secondary-foreground: #0a0a0a;
+	--secondary-foreground-hover: #ff3eb5;
+	--secondary-border: #ff3eb5;
+	--secondary-border-hover: #ff3eb5;
+	/* tertiary */
+	--tertiary: #ffffff;
+	--tertiary-hover: #606060;
+	--tertiary-foreground: #1d1d1d;
+	--tertiary-foreground-hover: #fafafa;
+	--tertiary-border: #1d1d1d;
+	--tertiary-border-hover: #1d1d1d;
+	/* focus */
+	--focus: #ffd53d;
+	--focus-hover: #0a0a0a;
+	--focus-foreground: #0a0a0a;
+	--focus-foreground-hover: #ffd53e;
+	--focus-border: #ffd53e;
+	--focus-border-hover: #ffd53e;
+	/* muted */
+	--muted: #f3f1f4;
+	--muted-foreground: #666666;
+	/* accent */
+	--accent: #e7e3e8;
+	--accent-foreground: #262626;
+	/* destructive */
+	--destructive: #bf4040;
+	--destructive-foreground: #1d1d1d;
+	/* border */
+	--border: #dac8d3;
+	--input: #996685;
+	--ring: #ff3eb5;
+	--radius: 0.25rem;
+
+	--light-gray: #ebebeb;
+	--off-black: #0a0a0a;
+	--neo-purple: #ff3eb5;
+	--lighter-black: #1d1d1d;
+
+	--radius-sm: 2rem;
+	--radius-md: 4px;
+	--radius-lg: 8px;
+	--radius-xl: 24px;
+	/* our own colors */
+	--neo-blue: #18b9fe;
+	--neo-gray: #f8f8f8;
+}
+
+/* .dark {
+	--background: 323 10% 10%;
+	--foreground: 323 0% 100%;
+	--card: 323 0% 10%;
+	--card-foreground: 323 0% 100%;
+	--popover: 323 10% 5%;
+	--popover-foreground: 323 0% 100%;
+	--primary: 323 100% 62.2%;
+	--primary-foreground: 0 0% 0%;
+	--secondary: 323 10% 20%;
+	--secondary-foreground: 0 0% 100%;
+	--muted: 285 10% 25%;
+	--muted-foreground: 323 0% 65%;
+	--accent: 285 10% 25%;
+	--accent-foreground: 323 0% 95%;
+	--destructive: 0 50% 50%;
+	--destructive-foreground: 323 0% 100%;
+	--border: 323 20% 50%;
+	--input: 323 20% 50%;
+	--ring: 323 100% 62.2%;
+	--radius: 0rem;
+} */
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+
+	body {
+		@apply bg-background text-foreground;
+	}
+
+	h1 {
+		@apply mb-8 text-5xl font-bold;
+	}
+
+	h2 {
+		@apply mb-4 text-3xl font-bold;
+	}
+
+	h3 {
+		@apply text-xl font-bold;
+	}
+
+	.required-mark::after {
+		content: '*';
+		color: red;
+		margin-left: 0.25rem;
+	}
+
+	.external-link {
+		@apply text-secondary;
+	}
+
+	input,
+	select,
+	textarea {
+		@apply text-base !important;
+	}
+}
+
+/* Box shadow */
+.box {
+	box-shadow: var(--box-shadow-base);
+}
+
+/* Translation */
+.translated {
+	transform: translate(var(--translate-box-shadow-x), var(--translate-box-shadow-y));
+}
+
+[hidden] {
+	display: none !important;
+}
+
+.dropzone {
+	background: transparent !important;
+	color: black !important;
+	border-color: black !important;
+}
+
+#tooltip {
+	display: none;
+	width: max-content;
+	position: absolute;
+	max-width: 400px;
+	background: #333;
+	color: white;
+	font-weight: bold;
+	padding: 5px;
+	border-radius: 4px;
+	font-size: 90%;
+	z-index: 999999;
+	word-wrap: break-word;
+}
+
+#arrow {
+	position: absolute;
+	background: #333;
+	width: 8px;
+	height: 8px;
+	transform: rotate(45deg);
+}
+
+[data-tooltip] {
+	pointer-events: all !important;
+}
+
+.notification-dot {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	background-color: hsl(var(--primary));
+	border-radius: 50%;
+	width: 10px;
+	height: 10px;
+}

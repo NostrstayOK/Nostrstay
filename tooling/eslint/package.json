@@ -1,0 +1,29 @@
+{
+  "name": "@plebeian/eslint",
+  "private": true,
+  "version": "0.3.0",
+  "type": "module",
+  "exports": {
+    "./base": "./base.js"
+  },
+  "scripts": {
+    "clean": "rm -rf node_modules",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-svelte": "^2.46.0",
+    "typescript-eslint": "^7.18.0"
+  },
+  "devDependencies": {
+    "@plebeian/prettier": "workspace:*",
+    "@types/eslint": "^8.56.12",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.1",
+    "typescript": "^5.6.3"
+  },
+  "prettier": "@plebeian/prettier"
+}

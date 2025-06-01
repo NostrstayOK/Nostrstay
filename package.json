@@ -1,0 +1,34 @@
+{
+  "name": "plebeian",
+  "private": "true",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "packageManager": "pnpm@9.1.4",
+  "scripts": {
+    "dev": "pnpm --parallel --stream -r run dev",
+    "build": "pnpm --filter=@plebeian/app run build",
+    "preview": "pnpm --filter=@plebeian/app run preview",
+    "lint": "pnpm --filter \"./packages/**\" --parallel --stream -r run lint",
+    "format": "pnpm --filter \"./packages/**\" --parallel --stream -r run format",
+    "format:fix": "pnpm --filter \"./packages/**\" --parallel --stream -r run format:fix",
+    "db:setup": "pnpm --filter './packages/database' run db:setup",
+    "db:init": "pnpm --filter './packages/database' run db:init",
+    "db:initMock": "pnpm --filter './packages/database' run db:initMock",
+    "db:check": "pnpm --filter './packages/database' run db:check",
+		"db:push": "pnpm --filter './packages/database' run db:push",
+		"db:migrate": "pnpm --filter './packages/database' run db:migrate",
+    "test:fresh": "pnpm db:setup && pnpm --parallel --stream -r run test",
+    "test": "pnpm --parallel --stream -r run test",
+    "studio": "cd packages/database && pnpm drizzle-kit studio"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "@plebeian/eslint": "workspace:*",
+    "@plebeian/prettier": "workspace:*"
+  }
+}

@@ -1,0 +1,64 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - production
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code 🏁 (for push)
+        if: ${{ github.event_name == 'push' }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 9.1.4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y sshpass rsync
+        
+      - run: pnpm install
+      - name: Check and apply database migrations
+        run: pnpm db:init
+      - run: pnpm build
+      - run: rm -rf sqlite.db node_modules **/node_modules .pnpm-store
+
+      - name: Upload Assets
+        if: github.event_name == 'push'
+        env:
+          PORT: 4173
+        run: |
+          rsync --rsh="/usr/bin/sshpass -p \"${{ secrets.REMOTE_PASSWORD }}\" ssh -o StrictHostKeyChecking=no -l ${{ secrets.REMOTE_USER }}" -azq --exclude='sqlite.db' . ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:plebeian.market.$PORT
+
+      - name: Deploy on push to production
+        if: github.event_name == 'push'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.REMOTE_PASSWORD }}
+          script: |
+            export PORT=4173
+            export ORIGIN=https://plebeian.market
+            cd plebeian.market.${PORT}
+            mv .env.sample .env
+            pnpm i --frozen-lockfile -f
+            pnpm db:migrate
+            fuser -k $PORT/tcp || true
+            cd packages/app
+            nohup node build > preview.log 2>&1 &
+            sleep 10
+            head -n 20 preview.log

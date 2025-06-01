@@ -1,4 +1,5 @@
 # Nostrstay
+
 NostrStay is a decentralized, peer-to-peer rental marketplace built on top of the Nostr protocol. Inspired by Plebeian Market, NostrStay leverages Nostr’s censorship-resistant, identity-first infrastructure to allow users to list and book rental properties without relying on centralized intermediaries like Airbnb. Hosts and guests interact directly using Nostr identities, encrypted messaging, and Bitcoin-based payments (on-chain and Lightning). Our goal is to return ownership of the sharing economy to its users with open-source code, permissionless access, and global usability.
 
 We aim for the platform to eventually become self-sustaining by giving users the option to contribute through small donations per transaction, crowdfunding campaigns, and other community-driven initiatives. These contributions will support ongoing development, maintenance, and improvements to enhance the overall user experience.
