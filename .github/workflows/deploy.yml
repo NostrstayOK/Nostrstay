@@ -1,0 +1,79 @@
+name: Deploy
+
+on:
+  issue_comment:
+    types: [created]
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    if: ${{ github.event.comment.body == '/deploy' || github.event.comment.body == '/takedown' || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    environment: preview
+    steps:
+      - name: Checkout code 🏁 (for issue comment)
+        if: ${{ github.event_name == 'issue_comment' }}
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.issue.number }}/head
+
+      - name: Checkout code 🏁 (for push)
+        if: ${{ github.event_name == 'push' }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 9.1.4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y sshpass rsync
+      
+      - run: pnpm install
+      - name: Check and apply database migrations
+        run: pnpm db:init
+      - run: pnpm build
+      - run: rm -rf sqlite.db node_modules **/node_modules .pnpm-store
+
+      - name: Upload Assets
+        if: ${{ (github.event.comment.body == '/deploy' && github.event.issue.pull_request) || github.event_name == 'push' }}
+        env:
+          PORT: ${{ github.ref == 'refs/heads/main' && '4175' || '4173' }}
+        run: |
+          rsync --rsh="/usr/bin/sshpass -p \"${{ secrets.REMOTE_PASSWORD }}\" ssh -o StrictHostKeyChecking=no -l ${{ secrets.REMOTE_USER }}" -azq --exclude='sqlite.db' . ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:plebeian.market.$PORT
+
+      - name: Deploy on /deploy or push to main
+        if: ${{ (github.event.comment.body == '/deploy' && github.event.issue.pull_request) || github.event_name == 'push' }}
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.REMOTE_PASSWORD }}
+          script: |
+            export PORT=${{ github.ref == 'refs/heads/main' && '4175' || '4173' }}
+            export ORIGIN=${{ github.ref == 'refs/heads/main' && 'https://staging.plebeian.market' || 'https://dev.plebeian.market' }}
+            cd plebeian.market.${PORT}
+            mv .env.sample .env
+            pnpm i --frozen-lockfile -f
+            pnpm db:migrate
+            fuser -k $PORT/tcp || true
+            cd packages/app
+            nohup node build > preview.log 2>&1 &
+            sleep 10
+            head -n 20 preview.log
+
+      - name: Stop Deployment
+        if: ${{ github.event.comment.body == '/takedown' && github.event.issue.pull_request }}
+        run: |
+          sshpass -p "${{ secrets.REMOTE_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
+            PORT=${{ github.ref == 'refs/heads/main' && '4175' || '4173' }}
+            fuser -k \$PORT/tcp || true
+          EOF
